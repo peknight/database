@@ -22,7 +22,6 @@ lazy val database = (project in file("."))
     databaseData.jvm,
     databaseData.js,
   )
-  .enablePlugins(JavaAppPackaging)
   .settings(commonSettings)
   .settings(
     name := "database",
