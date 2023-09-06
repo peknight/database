@@ -1,5 +1,5 @@
 package com.peknight.database.data
 
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
-case class GmtData[A](data: A, gmtCreate: ZonedDateTime, gmtModified: ZonedDateTime)
+case class GmtData[A](data: A, gmtCreate: OffsetDateTime, gmtModified: OffsetDateTime)
