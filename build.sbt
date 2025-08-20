@@ -14,8 +14,8 @@ lazy val database = (project in file("."))
     databaseData.native,
   )
 
-lazy val databaseCore = (crossProject(JSPlatform, JVMPlatform, NativePlatform) in file("database-core"))
+lazy val databaseCore = (crossProject(JVMPlatform, JSPlatform, NativePlatform) in file("database-core"))
   .settings(name := "database-core")
 
-lazy val databaseData = (crossProject(JSPlatform, JVMPlatform, NativePlatform) in file("database-data"))
+lazy val databaseData = (crossProject(JVMPlatform, JSPlatform, NativePlatform) in file("database-data"))
   .settings(name := "database-data")
