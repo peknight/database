@@ -3,7 +3,8 @@ package com.peknight.database.config
 import cats.effect.std.Env
 import cats.{Applicative, Monad, MonadError, Show}
 import com.comcast.ip4s.{Host, Port}
-import com.peknight.codec.config.{CodecConfig, given}
+import com.peknight.auth.{Password, User}
+import com.peknight.codec.config.given
 import com.peknight.codec.cursor.Cursor
 import com.peknight.codec.effect.instances.envReader.given
 import com.peknight.codec.error.DecodingFailure
@@ -13,6 +14,7 @@ import com.peknight.codec.obj.Object
 import com.peknight.codec.reader.Key
 import com.peknight.codec.sum.*
 import com.peknight.codec.{Codec, Decoder}
+import com.peknight.data.Identifier
 import com.peknight.query.Query
 import com.peknight.query.config.given
 import com.peknight.query.parser.parseToQuery

@@ -18,6 +18,8 @@ lazy val databaseCore = (crossProject(JVMPlatform, JSPlatform) in file("database
 lazy val databaseConfig = (crossProject(JVMPlatform, JSPlatform) in file("database-config"))
   .settings(name := "database-config")
   .settings(crossDependencies(
+    peknight.data,
+    peknight.auth,
     peknight.codec.effect,
     peknight.query,
     peknight.codec.ip4s,
