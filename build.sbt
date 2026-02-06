@@ -8,14 +8,19 @@ lazy val database = (project in file("."))
   .aggregate(
     databaseCore.jvm,
     databaseCore.js,
-    databaseCore.native,
-    databaseData.jvm,
-    databaseData.js,
-    databaseData.native,
+    databaseConfig.jvm,
+    databaseConfig.js,
   )
 
-lazy val databaseCore = (crossProject(JVMPlatform, JSPlatform, NativePlatform) in file("database-core"))
+lazy val databaseCore = (crossProject(JVMPlatform, JSPlatform) in file("database-core"))
   .settings(name := "database-core")
 
-lazy val databaseData = (crossProject(JVMPlatform, JSPlatform, NativePlatform) in file("database-data"))
-  .settings(name := "database-data")
+lazy val databaseConfig = (crossProject(JVMPlatform, JSPlatform) in file("database-config"))
+  .dependsOn(databaseCore)
+  .settings(name := "database-config")
+  .settings(crossDependencies(
+    peknight.codec.effect,
+    peknight.query,
+    peknight.codec.ip4s,
+    peknight.codec.http4s,
+  ))
