@@ -5,7 +5,9 @@ import com.peknight.codec.Codec
 import com.peknight.codec.cursor.Cursor
 import com.peknight.codec.sum.StringType
 
-case class Database(value: String)
+case class Database(value: String):
+  override def toString: String = value
+end Database
 object Database:
   given stringCodecDatabase[F[_]: Applicative]: Codec[F, String, String, Database] =
     Codec.map[F, String, String, Database](_.value)(Database.apply)
