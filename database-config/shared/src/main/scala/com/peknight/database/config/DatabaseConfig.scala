@@ -27,8 +27,9 @@ case class DatabaseConfig(
                            `type`: DatabaseType = DatabaseType.postgresql,
                            port: Option[Port] = None,
                            database: Option[Database] = None,
+                           query: Query = Query.fromObject(Object.empty),
                            identifier: Option[Identifier] = None,
-                           query: Query = Query.fromObject(Object.empty)
+                           poolSize: Int = 32
                          ):
   private lazy val queryString: String = query.mkString
   def remotePort: Port = port.getOrElse(`type`.port)
