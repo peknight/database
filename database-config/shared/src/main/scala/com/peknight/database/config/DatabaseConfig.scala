@@ -33,7 +33,8 @@ case class DatabaseConfig(
                          ):
   private lazy val queryString: String = query.mkString
   def remotePort: Port = port.getOrElse(`type`.port)
-  def url: Uri = Uri.unsafeFromString(s"jdbc:${`type`}://$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
+  def url: Uri = Uri.unsafeFromString(s"${`type`}://$user:${password.value}@$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
+  def jdbcUrl: Uri = Uri.unsafeFromString(s"jdbc:${`type`}://$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
 end DatabaseConfig
 object DatabaseConfig:
 
