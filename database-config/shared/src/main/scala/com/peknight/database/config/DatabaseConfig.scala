@@ -20,6 +20,9 @@ import com.peknight.query.config.given
 import com.peknight.query.parser.parseToQuery
 import org.http4s.Uri
 
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets.UTF_8
+
 case class DatabaseConfig(
                            host: Host,
                            user: User,
@@ -33,7 +36,7 @@ case class DatabaseConfig(
                          ):
   private lazy val queryString: String = query.mkString
   def remotePort: Port = port.getOrElse(`type`.port)
-  def url: Uri = Uri.unsafeFromString(s"${`type`}://$user:${password.value}@$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
+  def url: Uri = Uri.unsafeFromString(s"${`type`}://$user:${URLEncoder.encode(password.value, UTF_8)}@$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
   def jdbcUrl: Uri = Uri.unsafeFromString(s"jdbc:${`type`}://$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
 end DatabaseConfig
 object DatabaseConfig:
