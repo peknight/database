@@ -11,6 +11,7 @@ import com.peknight.codec.sum.StringType
 enum DatabaseType(val port: Port, val driver: String):
   case postgresql extends DatabaseType(port"5432", "org.postgresql.Driver")
   case mysql extends DatabaseType(port"3306", "com.mysql.cj.jdbc.Driver")
+  case clickhouse extends DatabaseType(port"8123", "com.clickhouse.jdbc.ClickHouseDriver")
 end DatabaseType
 object DatabaseType:
   given stringCodecDatabaseType[F[_]: Applicative]: Codec[F, String, String, DatabaseType] =
