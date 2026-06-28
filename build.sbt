@@ -5,19 +5,17 @@ commonSettings
 
 lazy val database = (project in file("."))
   .settings(name := "database")
-  .aggregate(
-    databaseCore.jvm,
-    databaseCore.js,
-    databaseConfig.jvm,
-    databaseConfig.js,
-  )
+  .aggregate(databaseCore.projectRefs *)
+  .aggregate(databaseConfig.projectRefs *)
 
-lazy val databaseCore = (crossProject(JVMPlatform, JSPlatform) in file("database-core"))
+lazy val databaseCore = (projectMatrix in file("database-core"))
   .settings(name := "database-core")
+  .jvmPlatform(scalaVersions = Seq(scala.scala3.version))
+  .jsPlatform(scalaVersions = Seq(scala.scala3.version))
 
-lazy val databaseConfig = (crossProject(JVMPlatform, JSPlatform) in file("database-config"))
+lazy val databaseConfig = (projectMatrix in file("database-config"))
   .settings(name := "database-config")
-  .settings(crossDependencies(
+  .settings(libraryDependencies ++= dependencies(
     peknight.data,
     peknight.auth,
     peknight.codec.effect,
@@ -25,3 +23,5 @@ lazy val databaseConfig = (crossProject(JVMPlatform, JSPlatform) in file("databa
     peknight.codec.ip4s,
     peknight.codec.http4s,
   ))
+  .jvmPlatform(scalaVersions = Seq(scala.scala3.version))
+  .jsPlatform(scalaVersions = Seq(scala.scala3.version))
