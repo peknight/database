@@ -3,8 +3,9 @@ import com.peknight.build.sbt.*
 
 commonSettings
 
-lazy val database = (project in file("."))
+lazy val database = rootProject
   .settings(name := "database")
+  .settings(publish / skip := true)
   .aggregate(databaseCore.projectRefs *)
   .aggregate(databaseConfig.projectRefs *)
 
