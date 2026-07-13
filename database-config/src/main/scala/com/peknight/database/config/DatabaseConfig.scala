@@ -24,10 +24,10 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
 
 case class DatabaseConfig(
-                           host: Host,
-                           user: User,
-                           password: Password,
                            `type`: DatabaseType = DatabaseType.postgresql,
+                           host: Option[Host] = None,
+                           user: Option[User] = None,
+                           password: Option[Password] = None,
                            port: Option[Port] = None,
                            database: Option[Database] = None,
                            query: Query = Query.fromObject(Object.empty),
@@ -35,9 +35,21 @@ case class DatabaseConfig(
                            poolSize: Int = 32
                          ):
   private lazy val queryString: String = query.mkString
-  def remotePort: Port = port.getOrElse(`type`.port)
-  def url: Uri = Uri.unsafeFromString(s"${`type`}://$user:${URLEncoder.encode(password.value, UTF_8)}@$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
-  def jdbcUrl: Uri = Uri.unsafeFromString(s"jdbc:${`type`}://$host:$remotePort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
+  def remotePort: Option[Port] = port.orElse(`type`.port)
+  private def hostPort: String =
+    (host, remotePort) match
+      case (Some(h), Some(p)) => s"$h:$p"
+      case (Some(h), _) => s"$h"
+      case (_, Some(p)) => s":$p"
+      case _ => ""
+  def url: Uri =
+    val userPassword: String = (user, password) match
+      case (Some(u), Some(p)) => s"$u:${URLEncoder.encode(p.value, UTF_8)}@"
+      case (Some(u), _) => s"$u@"
+      case (_, Some(p)) => s":${URLEncoder.encode(p.value, UTF_8)}@"
+      case _ => ""
+    Uri.unsafeFromString(s"${`type`}://$userPassword$hostPort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
+  def jdbcUrl: Uri = Uri.unsafeFromString(s"jdbc:${`type`}://$hostPort${database.map(d => s"/$d").getOrElse("")}${if queryString.isBlank then "" else s"?$queryString"}")
 end DatabaseConfig
 object DatabaseConfig:
 
