@@ -24,10 +24,10 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
 
 case class DatabaseConfig(
-                           `type`: DatabaseType = DatabaseType.postgresql,
                            host: Option[Host] = None,
                            user: Option[User] = None,
                            password: Option[Password] = None,
+                           `type`: DatabaseType = DatabaseType.postgresql,
                            port: Option[Port] = None,
                            database: Option[Database] = None,
                            query: Query = Query.fromObject(Object.empty),
