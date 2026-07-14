@@ -9,11 +9,11 @@ import java.util.List;
  *
  * DMS ExecuteScript 不返回列类型信息，统一使用 VARCHAR
  */
-public class AliyunDmsResultSetMetaData implements ResultSetMetaData {
+public class AliyunDmsResultSetMetaData1 implements ResultSetMetaData {
 
     private final List<String> columnNames;
 
-    public AliyunDmsResultSetMetaData(List<String> columnNames) {
+    public AliyunDmsResultSetMetaData1(List<String> columnNames) {
         this.columnNames = columnNames;
     }
 

@@ -6,12 +6,12 @@ import java.util.Map;
 /**
  * ExecuteScript 结果封装
  */
-public class ExecuteResult {
+public class ExecuteResult1 {
     private final List<String> columnNames;
     private final List<Map<String, Object>> rows;
     private final long rowCount;
 
-    public ExecuteResult(List<String> columnNames, List<Map<String, Object>> rows, long rowCount) {
+    public ExecuteResult1(List<String> columnNames, List<Map<String, Object>> rows, long rowCount) {
         this.columnNames = columnNames;
         this.rows = rows;
         this.rowCount = rowCount;

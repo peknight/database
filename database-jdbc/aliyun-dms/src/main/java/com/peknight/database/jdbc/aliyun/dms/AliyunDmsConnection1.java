@@ -10,18 +10,18 @@ import java.util.concurrent.Executor;
  *
  * 不支持事务，每次调用 ExecuteScript 都是独立的 HTTP 请求
  */
-public class AliyunDmsConnection implements Connection {
+public class AliyunDmsConnection1 implements Connection {
 
-    private final AliyunDmsClient aliyunDmsClient;
+    private final AliyunDmsClient1 aliyunDmsClient;
     private final long databaseId;
     private volatile boolean closed = false;
 
-    public AliyunDmsConnection(AliyunDmsClient aliyunDmsClient, long databaseId) {
+    public AliyunDmsConnection1(AliyunDmsClient1 aliyunDmsClient, long databaseId) {
         this.aliyunDmsClient = aliyunDmsClient;
         this.databaseId = databaseId;
     }
 
-    public AliyunDmsClient getDmsClient() {
+    public AliyunDmsClient1 getDmsClient() {
         return aliyunDmsClient;
     }
 
@@ -32,19 +32,19 @@ public class AliyunDmsConnection implements Connection {
     @Override
     public Statement createStatement() throws SQLException {
         checkClosed();
-        return new AliyunDmsStatement(this);
+        return new AliyunDmsStatement1(this);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         checkClosed();
-        return new AliyunDmsPreparedStatement(this, sql);
+        return new AliyunDmsPreparedStatement1(this, sql);
     }
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
         checkClosed();
-        return new AliyunDmsDatabaseMetaData(this);
+        return new AliyunDmsDatabaseMetaData1(this);
     }
 
     @Override

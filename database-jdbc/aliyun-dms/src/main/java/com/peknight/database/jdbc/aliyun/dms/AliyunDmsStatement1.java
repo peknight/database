@@ -5,14 +5,14 @@ import java.sql.*;
 /**
  * DMS JDBC Statement
  */
-public class AliyunDmsStatement implements Statement {
+public class AliyunDmsStatement1 implements Statement {
 
-    protected final AliyunDmsConnection connection;
-    protected AliyunDmsResultSet currentResultSet;
+    protected final AliyunDmsConnection1 connection;
+    protected AliyunDmsResultSet1 currentResultSet;
     protected long updateCount = -1;
     protected volatile boolean closed = false;
 
-    public AliyunDmsStatement(AliyunDmsConnection connection) {
+    public AliyunDmsStatement1(AliyunDmsConnection1 connection) {
         this.connection = connection;
     }
 
@@ -20,9 +20,9 @@ public class AliyunDmsStatement implements Statement {
     public ResultSet executeQuery(String sql) throws SQLException {
         checkClosed();
         closeCurrentResultSet();
-        ExecuteResult result = connection.getDmsClient().executeScript(connection.getDatabaseId(), sql);
+        ExecuteResult1 result = connection.getDmsClient().executeScript(connection.getDatabaseId(), sql);
 
-        currentResultSet = new AliyunDmsResultSet(this, result.getColumnNames(), result.getRows());
+        currentResultSet = new AliyunDmsResultSet1(this, result.getColumnNames(), result.getRows());
         updateCount = -1;
         return currentResultSet;
     }
@@ -31,7 +31,7 @@ public class AliyunDmsStatement implements Statement {
     public int executeUpdate(String sql) throws SQLException {
         checkClosed();
         closeCurrentResultSet();
-        ExecuteResult result = connection.getDmsClient().executeScript(connection.getDatabaseId(), sql);
+        ExecuteResult1 result = connection.getDmsClient().executeScript(connection.getDatabaseId(), sql);
 
         currentResultSet = null;
         updateCount = result.getRowCount();
@@ -42,10 +42,10 @@ public class AliyunDmsStatement implements Statement {
     public boolean execute(String sql) throws SQLException {
         checkClosed();
         closeCurrentResultSet();
-        ExecuteResult result = connection.getDmsClient().executeScript(connection.getDatabaseId(), sql);
+        ExecuteResult1 result = connection.getDmsClient().executeScript(connection.getDatabaseId(), sql);
 
         if (result.getColumnNames() != null && !result.getColumnNames().isEmpty()) {
-            currentResultSet = new AliyunDmsResultSet(this, result.getColumnNames(), result.getRows());
+            currentResultSet = new AliyunDmsResultSet1(this, result.getColumnNames(), result.getRows());
             updateCount = -1;
             return true;
         } else {

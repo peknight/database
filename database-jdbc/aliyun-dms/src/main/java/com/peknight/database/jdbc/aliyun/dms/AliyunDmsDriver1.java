@@ -15,13 +15,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Properties: user=AccessKeyId, password=AccessKeySecret
  * 查询参数（?key=value）可覆盖 URL 中的 regionId
  */
-public class AliyunDmsDriver implements Driver {
+public class AliyunDmsDriver1 implements Driver {
 
     static final String URL_PREFIX = "jdbc:aliyun-dms://";
 
     static {
         try {
-            DriverManager.registerDriver(new AliyunDmsDriver());
+            DriverManager.registerDriver(new AliyunDmsDriver1());
         } catch (SQLException e) {
             throw new RuntimeException("Failed to register DmsDriver", e);
         }
@@ -96,8 +96,8 @@ public class AliyunDmsDriver implements Driver {
             throw new SQLException("AccessKeySecret (password) is required");
         }
 
-        AliyunDmsClient aliyunDmsClient = new AliyunDmsClient(accessKeyId, accessKeySecret, regionId);
-        return new AliyunDmsConnection(aliyunDmsClient, databaseId);
+        AliyunDmsClient1 aliyunDmsClient = new AliyunDmsClient1(accessKeyId, accessKeySecret, regionId);
+        return new AliyunDmsConnection1(aliyunDmsClient, databaseId);
     }
 
     private void parseQueryParams(String queryString, Properties props) {

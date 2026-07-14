@@ -12,12 +12,12 @@ import java.util.Map;
 /**
  * 封装阿里云 DMS SDK Client
  */
-public class AliyunDmsClient {
+public class AliyunDmsClient1 {
 
     private final Client client;
     private final String regionId;
 
-    public AliyunDmsClient(String accessKeyId, String accessKeySecret, String regionId) throws AliyunDmsException {
+    public AliyunDmsClient1(String accessKeyId, String accessKeySecret, String regionId) throws AliyunDmsException1 {
         try {
             Config config = new Config()
                     .setAccessKeyId(accessKeyId)
@@ -26,7 +26,7 @@ public class AliyunDmsClient {
             this.client = new Client(config);
             this.regionId = regionId;
         } catch (Exception e) {
-            throw new AliyunDmsException("Failed to initialize DMS client", e);
+            throw new AliyunDmsException1("Failed to initialize DMS client", e);
         }
     }
 
@@ -37,7 +37,7 @@ public class AliyunDmsClient {
     /**
      * 执行 SQL 脚本，返回结果
      */
-    public ExecuteResult executeScript(long databaseId, String sql) throws SQLException {
+    public ExecuteResult1 executeScript(long databaseId, String sql) throws SQLException {
         try {
             if (databaseId > Integer.MAX_VALUE) {
                 throw new SQLException("databaseId exceeds integer range: " + databaseId);
@@ -51,7 +51,7 @@ public class AliyunDmsClient {
             ExecuteScriptResponseBody body = response.getBody();
 
             if (body.getSuccess() == null || !body.getSuccess()) {
-                throw new AliyunDmsException(
+                throw new AliyunDmsException1(
                         body.getErrorCode(),
                         body.getErrorMessage(),
                         body.getRequestId()
@@ -60,13 +60,13 @@ public class AliyunDmsClient {
 
             List<ExecuteScriptResponseBody.ExecuteScriptResponseBodyResults> results = body.getResults();
             if (results == null || results.isEmpty()) {
-                return new ExecuteResult(Collections.emptyList(), Collections.emptyList(), 0);
+                return new ExecuteResult1(Collections.emptyList(), Collections.emptyList(), 0);
             }
 
             // 取第一个结果（单语句执行）
             ExecuteScriptResponseBody.ExecuteScriptResponseBodyResults result = results.getFirst();
             if (result.getSuccess() == null || !result.getSuccess()) {
-                throw new AliyunDmsException("DMS ExecuteScript failed: " + result.getMessage());
+                throw new AliyunDmsException1("DMS ExecuteScript failed: " + result.getMessage());
             }
 
             List<String> columnNames = result.getColumnNames() == null ?
@@ -77,11 +77,11 @@ public class AliyunDmsClient {
                     Collections.emptyList() : (List<Map<String, Object>>) (List<?>) result.getRows();
 
             long rowCount = result.getRowCount() != null ? result.getRowCount() : rows.size();
-            return new ExecuteResult(columnNames, rows, rowCount);
-        } catch (AliyunDmsException e) {
+            return new ExecuteResult1(columnNames, rows, rowCount);
+        } catch (AliyunDmsException1 e) {
             throw e;
         } catch (Exception e) {
-            throw new AliyunDmsException("DMS API call failed: " + e.getMessage(), e);
+            throw new AliyunDmsException1("DMS API call failed: " + e.getMessage(), e);
         }
     }
 
@@ -103,7 +103,7 @@ public class AliyunDmsClient {
             }
             return wrapper.getSearchDatabase();
         } catch (Exception e) {
-            throw new AliyunDmsException("SearchDatabase failed: " + e.getMessage(), e);
+            throw new AliyunDmsException1("SearchDatabase failed: " + e.getMessage(), e);
         }
     }
 
@@ -128,7 +128,7 @@ public class AliyunDmsClient {
             }
             return wrapper.getTable();
         } catch (Exception e) {
-            throw new AliyunDmsException("ListTables failed: " + e.getMessage(), e);
+            throw new AliyunDmsException1("ListTables failed: " + e.getMessage(), e);
         }
     }
 
@@ -149,7 +149,7 @@ public class AliyunDmsClient {
             }
             return wrapper.getColumn();
         } catch (Exception e) {
-            throw new AliyunDmsException("ListColumns failed: " + e.getMessage(), e);
+            throw new AliyunDmsException1("ListColumns failed: " + e.getMessage(), e);
         }
     }
 }

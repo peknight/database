@@ -5,24 +5,24 @@ import java.sql.SQLException;
 /**
  * DMS API 异常封装为 SQLException
  */
-public class AliyunDmsException extends SQLException {
+public class AliyunDmsException1 extends SQLException {
 
     private final String dmsErrorCode;
     private final String dmsRequestId;
 
-    public AliyunDmsException(String message) {
+    public AliyunDmsException1(String message) {
         super(message);
         this.dmsErrorCode = null;
         this.dmsRequestId = null;
     }
 
-    public AliyunDmsException(String message, Throwable cause) {
+    public AliyunDmsException1(String message, Throwable cause) {
         super(message, cause);
         this.dmsErrorCode = null;
         this.dmsRequestId = null;
     }
 
-    public AliyunDmsException(String dmsErrorCode, String message, String requestId) {
+    public AliyunDmsException1(String dmsErrorCode, String message, String requestId) {
         super(message);
         this.dmsErrorCode = dmsErrorCode;
         this.dmsRequestId = requestId;

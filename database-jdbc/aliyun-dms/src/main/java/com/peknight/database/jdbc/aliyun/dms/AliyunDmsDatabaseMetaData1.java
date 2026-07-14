@@ -12,11 +12,11 @@ import java.util.*;
  *
  * 实现 getTables() 和 getColumns()，其他方法返回空结果或抛不支持
  */
-public class AliyunDmsDatabaseMetaData implements DatabaseMetaData {
+public class AliyunDmsDatabaseMetaData1 implements DatabaseMetaData {
 
-    private final AliyunDmsConnection connection;
+    private final AliyunDmsConnection1 connection;
 
-    public AliyunDmsDatabaseMetaData(AliyunDmsConnection connection) {
+    public AliyunDmsDatabaseMetaData1(AliyunDmsConnection1 connection) {
         this.connection = connection;
     }
 
@@ -30,7 +30,7 @@ public class AliyunDmsDatabaseMetaData implements DatabaseMetaData {
 
         List<String> colNames = Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS");
         List<Map<String, Object>> rows = getRows(tables, typeFilter);
-        return new AliyunDmsResultSet(null, colNames, rows);
+        return new AliyunDmsResultSet1(null, colNames, rows);
     }
 
     @NotNull
@@ -92,7 +92,7 @@ public class AliyunDmsDatabaseMetaData implements DatabaseMetaData {
             }
         }
 
-        return new AliyunDmsResultSet(null, colNames, rows);
+        return new AliyunDmsResultSet1(null, colNames, rows);
     }
 
     /**
@@ -171,7 +171,7 @@ public class AliyunDmsDatabaseMetaData implements DatabaseMetaData {
     // ====== 以下返回空 ResultSet 或默认值 ======
 
     private ResultSet emptyResultSet(String... columnNames) {
-        return new AliyunDmsResultSet(
+        return new AliyunDmsResultSet1(
                 null,
                 Arrays.asList(columnNames),
                 Collections.<Map<String, Object>>emptyList()
@@ -521,7 +521,7 @@ public class AliyunDmsDatabaseMetaData implements DatabaseMetaData {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("TABLE_TYPE", "TABLE");
         List<Map<String, Object>> rows = Collections.<Map<String, Object>>singletonList(row);
-        return new AliyunDmsResultSet(null, Collections.singletonList("TABLE_TYPE"), rows);
+        return new AliyunDmsResultSet1(null, Collections.singletonList("TABLE_TYPE"), rows);
     }
 
     @Override

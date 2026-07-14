@@ -14,12 +14,12 @@ import java.util.Map;
  *
  * 参数在客户端拼接到 SQL，DMS 不支持服务端参数化
  */
-public class AliyunDmsPreparedStatement extends AliyunDmsStatement implements PreparedStatement {
+public class AliyunDmsPreparedStatement1 extends AliyunDmsStatement1 implements PreparedStatement {
 
     private final String rawSql;
     private final Map<Integer, Object> parameters = new HashMap<>();
 
-    public AliyunDmsPreparedStatement(AliyunDmsConnection connection, String sql) {
+    public AliyunDmsPreparedStatement1(AliyunDmsConnection1 connection, String sql) {
         super(connection);
         this.rawSql = sql;
     }

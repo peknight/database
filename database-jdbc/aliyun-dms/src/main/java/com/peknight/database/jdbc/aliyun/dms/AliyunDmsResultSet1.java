@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * 内部持有 List<Map<String, Object>> rows + List<String> columnNames
  */
-public class AliyunDmsResultSet implements ResultSet {
+public class AliyunDmsResultSet1 implements ResultSet {
 
     private final Statement statement;
     private final List<String> columnNames;
@@ -23,7 +23,7 @@ public class AliyunDmsResultSet implements ResultSet {
     private boolean closed = false;
     private boolean lastReadWasNull = false;
 
-    public AliyunDmsResultSet(Statement statement, List<String> columnNames, List<Map<String, Object>> rows) {
+    public AliyunDmsResultSet1(Statement statement, List<String> columnNames, List<Map<String, Object>> rows) {
         this.statement = statement;
         this.columnNames = columnNames;
         this.rows = rows;
@@ -235,7 +235,7 @@ public class AliyunDmsResultSet implements ResultSet {
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         checkClosed();
-        return new AliyunDmsResultSetMetaData(columnNames);
+        return new AliyunDmsResultSetMetaData1(columnNames);
     }
 
     @Override
