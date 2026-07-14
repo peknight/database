@@ -8,6 +8,7 @@ lazy val database = rootProject
   .settings(publish / skip := true)
   .aggregate(databaseCore.projectRefs *)
   .aggregate(databaseConfig.projectRefs *)
+  .aggregate(databaseJdbc)
 
 lazy val databaseCore = (projectMatrix in file("database-core"))
   .settings(name := "database-core")
@@ -24,5 +25,16 @@ lazy val databaseConfig = (projectMatrix in file("database-config"))
     peknight.codec.ip4s,
     peknight.codec.http4s,
   ))
+  .jvmPlatform(scalaVersions = Seq(scala.scala3.version))
+  .jsPlatform(scalaVersions = Seq(scala.scala3.version))
+
+lazy val databaseJdbc = (project in file("database-jdbc"))
+  .settings(name := "database-jdbc")
+  .settings(publish / skip := true)
+  .aggregate(databaseJdbcAliyunDms.projectRefs *)
+
+lazy val databaseJdbcAliyunDms = (projectMatrix in file("database-jdbc/aliyun-dms"))
+  .settings(name := "jdbc-aliyun-dms")
+  .settings(libraryDependencies ++= jvmDependencies(aliyun.dmsEnterprise))
   .jvmPlatform(scalaVersions = Seq(scala.scala3.version))
   .jsPlatform(scalaVersions = Seq(scala.scala3.version))
