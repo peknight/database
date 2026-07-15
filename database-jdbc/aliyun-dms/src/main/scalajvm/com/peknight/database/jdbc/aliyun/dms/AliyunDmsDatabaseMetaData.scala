@@ -1,365 +1,446 @@
 package com.peknight.database.jdbc.aliyun.dms
 
-import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
+import cats.syntax.traverse.*
+import com.peknight.codec.number.Number
+
+import java.sql.{Array as _, *}
 
 /**
  * DMS JDBC DatabaseMetaData
  *
  * 实现 getTables() 和 getColumns()，其他方法返回空结果或抛不支持
  */
-case class AliyunDmsDatabaseMetaData() extends DatabaseMetaData:
-  def allProceduresAreCallable(): Boolean = ???
+case class AliyunDmsDatabaseMetaData(connection: AliyunDmsConnection) extends DatabaseMetaData:
+  def allProceduresAreCallable(): Boolean = false
 
-  def allTablesAreSelectable(): Boolean = ???
+  def allTablesAreSelectable(): Boolean = true
 
-  def getURL: String = ???
+  def getURL: String = s"jdbc:aliyun-dms://${connection.client.regionId}/${connection.databaseId}"
 
-  def getUserName: String = ???
+  def getUserName: String = null
 
-  def isReadOnly: Boolean = ???
+  def isReadOnly: Boolean = true
 
-  def nullsAreSortedHigh(): Boolean = ???
+  def nullsAreSortedHigh(): Boolean = false
 
-  def nullsAreSortedLow(): Boolean = ???
+  def nullsAreSortedLow(): Boolean = true
 
-  def nullsAreSortedAtStart(): Boolean = ???
+  def nullsAreSortedAtStart(): Boolean = false
 
-  def nullsAreSortedAtEnd(): Boolean = ???
+  def nullsAreSortedAtEnd(): Boolean = false
 
-  def getDatabaseProductName: String = ???
+  def getDatabaseProductName: String = "Alibaba Cloud DMS"
 
-  def getDatabaseProductVersion: String = ???
+  def getDatabaseProductVersion: String = "1.0"
 
-  def getDriverName: String = ???
+  def getDriverName: String = "jdbc-aliyun-dms"
 
-  def getDriverVersion: String = ???
+  def getDriverVersion: String = "0.1.0"
 
-  def getDriverMajorVersion: Int = ???
+  def getDriverMajorVersion: Int = 0
 
-  def getDriverMinorVersion: Int = ???
+  def getDriverMinorVersion: Int = 1
 
-  def usesLocalFiles(): Boolean = ???
+  def usesLocalFiles(): Boolean = false
 
-  def usesLocalFilePerTable(): Boolean = ???
+  def usesLocalFilePerTable(): Boolean = false
 
-  def supportsMixedCaseIdentifiers(): Boolean = ???
+  def supportsMixedCaseIdentifiers(): Boolean = true
 
-  def storesUpperCaseIdentifiers(): Boolean = ???
+  def storesUpperCaseIdentifiers(): Boolean = false
 
-  def storesLowerCaseIdentifiers(): Boolean = ???
+  def storesLowerCaseIdentifiers(): Boolean = false
 
-  def storesMixedCaseIdentifiers(): Boolean = ???
+  def storesMixedCaseIdentifiers(): Boolean = true
 
-  def supportsMixedCaseQuotedIdentifiers(): Boolean = ???
+  def supportsMixedCaseQuotedIdentifiers(): Boolean = true
 
-  def storesUpperCaseQuotedIdentifiers(): Boolean = ???
+  def storesUpperCaseQuotedIdentifiers(): Boolean = false
 
-  def storesLowerCaseQuotedIdentifiers(): Boolean = ???
+  def storesLowerCaseQuotedIdentifiers(): Boolean = false
 
-  def storesMixedCaseQuotedIdentifiers(): Boolean = ???
+  def storesMixedCaseQuotedIdentifiers(): Boolean = true
 
-  def getIdentifierQuoteString: String = ???
+  def getIdentifierQuoteString: String = "`"
 
-  def getSQLKeywords: String = ???
+  def getSQLKeywords: String = ""
 
-  def getNumericFunctions: String = ???
+  def getNumericFunctions: String = ""
 
-  def getStringFunctions: String = ???
+  def getStringFunctions: String = ""
 
-  def getSystemFunctions: String = ???
+  def getSystemFunctions: String = ""
 
-  def getTimeDateFunctions: String = ???
+  def getTimeDateFunctions: String = ""
 
-  def getSearchStringEscape: String = ???
+  def getSearchStringEscape: String = "\\"
 
-  def getExtraNameCharacters: String = ???
+  def getExtraNameCharacters: String = ""
 
-  def supportsAlterTableWithAddColumn(): Boolean = ???
+  def supportsAlterTableWithAddColumn(): Boolean = false
 
-  def supportsAlterTableWithDropColumn(): Boolean = ???
+  def supportsAlterTableWithDropColumn(): Boolean = false
 
-  def supportsColumnAliasing(): Boolean = ???
+  def supportsColumnAliasing(): Boolean = true
 
-  def nullPlusNonNullIsNull(): Boolean = ???
+  def nullPlusNonNullIsNull(): Boolean = true
 
-  def supportsConvert(): Boolean = ???
+  def supportsConvert(): Boolean = false
 
-  def supportsConvert(fromType: Int, toType: Int): Boolean = ???
+  def supportsConvert(fromType: Int, toType: Int): Boolean = false
 
-  def supportsTableCorrelationNames(): Boolean = ???
+  def supportsTableCorrelationNames(): Boolean = true
 
-  def supportsDifferentTableCorrelationNames(): Boolean = ???
+  def supportsDifferentTableCorrelationNames(): Boolean = false
 
-  def supportsExpressionsInOrderBy(): Boolean = ???
+  def supportsExpressionsInOrderBy(): Boolean = true
 
-  def supportsOrderByUnrelated(): Boolean = ???
+  def supportsOrderByUnrelated(): Boolean = true
 
-  def supportsGroupBy(): Boolean = ???
+  def supportsGroupBy(): Boolean = true
 
-  def supportsGroupByUnrelated(): Boolean = ???
+  def supportsGroupByUnrelated(): Boolean = true
 
-  def supportsGroupByBeyondSelect(): Boolean = ???
+  def supportsGroupByBeyondSelect(): Boolean = true
 
-  def supportsLikeEscapeClause(): Boolean = ???
+  def supportsLikeEscapeClause(): Boolean = true
 
-  def supportsMultipleResultSets(): Boolean = ???
+  def supportsMultipleResultSets(): Boolean = false
 
-  def supportsMultipleTransactions(): Boolean = ???
+  def supportsMultipleTransactions(): Boolean = false
 
-  def supportsNonNullableColumns(): Boolean = ???
+  def supportsNonNullableColumns(): Boolean = true
 
-  def supportsMinimumSQLGrammar(): Boolean = ???
+  def supportsMinimumSQLGrammar(): Boolean = true
 
-  def supportsCoreSQLGrammar(): Boolean = ???
+  def supportsCoreSQLGrammar(): Boolean = true
 
-  def supportsExtendedSQLGrammar(): Boolean = ???
+  def supportsExtendedSQLGrammar(): Boolean = false
 
-  def supportsANSI92EntryLevelSQL(): Boolean = ???
+  def supportsANSI92EntryLevelSQL(): Boolean = true
 
-  def supportsANSI92IntermediateSQL(): Boolean = ???
+  def supportsANSI92IntermediateSQL(): Boolean = false
 
-  def supportsANSI92FullSQL(): Boolean = ???
+  def supportsANSI92FullSQL(): Boolean = false
 
-  def supportsIntegrityEnhancementFacility(): Boolean = ???
+  def supportsIntegrityEnhancementFacility(): Boolean = false
 
-  def supportsOuterJoins(): Boolean = ???
+  def supportsOuterJoins(): Boolean = true
 
-  def supportsFullOuterJoins(): Boolean = ???
+  def supportsFullOuterJoins(): Boolean = true
 
-  def supportsLimitedOuterJoins(): Boolean = ???
+  def supportsLimitedOuterJoins(): Boolean = true
 
-  def getSchemaTerm: String = ???
+  def getSchemaTerm: String = "schema"
 
-  def getProcedureTerm: String = ???
+  def getProcedureTerm: String = "procedure"
 
-  def getCatalogTerm: String = ???
+  def getCatalogTerm: String = "catalog"
 
-  def isCatalogAtStart: Boolean = ???
+  def isCatalogAtStart: Boolean = true
 
-  def getCatalogSeparator: String = ???
+  def getCatalogSeparator: String = "."
 
-  def supportsSchemasInDataManipulation(): Boolean = ???
+  def supportsSchemasInDataManipulation(): Boolean = false
 
-  def supportsSchemasInProcedureCalls(): Boolean = ???
+  def supportsSchemasInProcedureCalls(): Boolean = false
 
-  def supportsSchemasInTableDefinitions(): Boolean = ???
+  def supportsSchemasInTableDefinitions(): Boolean = false
 
-  def supportsSchemasInIndexDefinitions(): Boolean = ???
+  def supportsSchemasInIndexDefinitions(): Boolean = false
 
-  def supportsSchemasInPrivilegeDefinitions(): Boolean = ???
+  def supportsSchemasInPrivilegeDefinitions(): Boolean = false
 
-  def supportsCatalogsInDataManipulation(): Boolean = ???
+  def supportsCatalogsInDataManipulation(): Boolean = false
 
-  def supportsCatalogsInProcedureCalls(): Boolean = ???
+  def supportsCatalogsInProcedureCalls(): Boolean = false
 
-  def supportsCatalogsInTableDefinitions(): Boolean = ???
+  def supportsCatalogsInTableDefinitions(): Boolean = false
 
-  def supportsCatalogsInIndexDefinitions(): Boolean = ???
+  def supportsCatalogsInIndexDefinitions(): Boolean = false
 
-  def supportsCatalogsInPrivilegeDefinitions(): Boolean = ???
+  def supportsCatalogsInPrivilegeDefinitions(): Boolean = false
 
-  def supportsPositionedDelete(): Boolean = ???
+  def supportsPositionedDelete(): Boolean = false
 
-  def supportsPositionedUpdate(): Boolean = ???
+  def supportsPositionedUpdate(): Boolean = false
 
-  def supportsSelectForUpdate(): Boolean = ???
+  def supportsSelectForUpdate(): Boolean = false
 
-  def supportsStoredProcedures(): Boolean = ???
+  def supportsStoredProcedures(): Boolean = false
 
-  def supportsSubqueriesInComparisons(): Boolean = ???
+  def supportsSubqueriesInComparisons(): Boolean = true
 
-  def supportsSubqueriesInExists(): Boolean = ???
+  def supportsSubqueriesInExists(): Boolean = true
 
-  def supportsSubqueriesInIns(): Boolean = ???
+  def supportsSubqueriesInIns(): Boolean = true
 
-  def supportsSubqueriesInQuantifieds(): Boolean = ???
+  def supportsSubqueriesInQuantifieds(): Boolean = true
 
-  def supportsCorrelatedSubqueries(): Boolean = ???
+  def supportsCorrelatedSubqueries(): Boolean = true
 
-  def supportsUnion(): Boolean = ???
+  def supportsUnion(): Boolean = true
 
-  def supportsUnionAll(): Boolean = ???
+  def supportsUnionAll(): Boolean = true
 
-  def supportsOpenCursorsAcrossCommit(): Boolean = ???
+  def supportsOpenCursorsAcrossCommit(): Boolean = false
 
-  def supportsOpenCursorsAcrossRollback(): Boolean = ???
+  def supportsOpenCursorsAcrossRollback(): Boolean = false
 
-  def supportsOpenStatementsAcrossCommit(): Boolean = ???
+  def supportsOpenStatementsAcrossCommit(): Boolean = false
 
-  def supportsOpenStatementsAcrossRollback(): Boolean = ???
+  def supportsOpenStatementsAcrossRollback(): Boolean = false
 
-  def getMaxBinaryLiteralLength: Int = ???
+  def getMaxBinaryLiteralLength: Int = 0
 
-  def getMaxCharLiteralLength: Int = ???
+  def getMaxCharLiteralLength: Int = 0
 
-  def getMaxColumnNameLength: Int = ???
+  def getMaxColumnNameLength: Int = 0
 
-  def getMaxColumnsInGroupBy: Int = ???
+  def getMaxColumnsInGroupBy: Int = 0
 
-  def getMaxColumnsInIndex: Int = ???
+  def getMaxColumnsInIndex: Int = 0
 
-  def getMaxColumnsInOrderBy: Int = ???
+  def getMaxColumnsInOrderBy: Int = 0
 
-  def getMaxColumnsInSelect: Int = ???
+  def getMaxColumnsInSelect: Int = 0
 
-  def getMaxColumnsInTable: Int = ???
+  def getMaxColumnsInTable: Int = 0
 
-  def getMaxConnections: Int = ???
+  def getMaxConnections: Int = 0
 
-  def getMaxCursorNameLength: Int = ???
+  def getMaxCursorNameLength: Int = 0
 
-  def getMaxIndexLength: Int = ???
+  def getMaxIndexLength: Int = 0
 
-  def getMaxSchemaNameLength: Int = ???
+  def getMaxSchemaNameLength: Int = 0
 
-  def getMaxProcedureNameLength: Int = ???
+  def getMaxProcedureNameLength: Int = 0
 
-  def getMaxCatalogNameLength: Int = ???
+  def getMaxCatalogNameLength: Int = 0
 
-  def getMaxRowSize: Int = ???
+  def getMaxRowSize: Int = 0
 
-  def doesMaxRowSizeIncludeBlobs(): Boolean = ???
+  def doesMaxRowSizeIncludeBlobs(): Boolean = false
 
-  def getMaxStatementLength: Int = ???
+  def getMaxStatementLength: Int = 0
 
-  def getMaxStatements: Int = ???
+  def getMaxStatements: Int = 0
 
-  def getMaxTableNameLength: Int = ???
+  def getMaxTableNameLength: Int = 0
 
-  def getMaxTablesInSelect: Int = ???
+  def getMaxTablesInSelect: Int = 0
 
-  def getMaxUserNameLength: Int = ???
+  def getMaxUserNameLength: Int = 0
 
-  def getDefaultTransactionIsolation: Int = ???
+  def getDefaultTransactionIsolation: Int = Connection.TRANSACTION_NONE
 
-  def supportsTransactions(): Boolean = ???
+  def supportsTransactions(): Boolean = false
 
-  def supportsTransactionIsolationLevel(level: Int): Boolean = ???
+  def supportsTransactionIsolationLevel(level: Int): Boolean = level == Connection.TRANSACTION_NONE
 
-  def supportsDataDefinitionAndDataManipulationTransactions(): Boolean = ???
+  def supportsDataDefinitionAndDataManipulationTransactions(): Boolean = false
 
-  def supportsDataManipulationTransactionsOnly(): Boolean = ???
+  def supportsDataManipulationTransactionsOnly(): Boolean = false
 
-  def dataDefinitionCausesTransactionCommit(): Boolean = ???
+  def dataDefinitionCausesTransactionCommit(): Boolean = false
 
-  def dataDefinitionIgnoredInTransactions(): Boolean = ???
+  def dataDefinitionIgnoredInTransactions(): Boolean = false
 
-  def getProcedures(catalog: String, schemaPattern: String, procedureNamePattern: String): ResultSet = ???
+  def getProcedures(catalog: String, schemaPattern: String, procedureNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("PROCEDURE_CAT", "PROCEDURE_SCHEM", "PROCEDURE_NAME", "REMARKS", "PROCEDURE_TYPE", "SPECIFIC_NAME")
 
-  def getProcedureColumns(catalog: String, schemaPattern: String, procedureNamePattern: String, columnNamePattern: String): ResultSet = ???
+  def getProcedureColumns(catalog: String, schemaPattern: String, procedureNamePattern: String, columnNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("PROCEDURE_CAT", "PROCEDURE_SCHEM", "PROCEDURE_NAME", "COLUMN_NAME", "COLUMN_TYPE", "DATA_TYPE", "TYPE_NAME")
 
-  def getTables(catalog: String, schemaPattern: String, tableNamePattern: String, types: Array[String]): ResultSet = ???
+  def getTables(catalog: String, schemaPattern: String, tableNamePattern: String, types: Array[String]): ResultSet =
+    val tableType: String = "TABLE"
+    val typeFilter: Set[String] = Option(types).map(_.toSet).getOrElse(Set.empty)
+    val columnNames: Vector[String] = Vector("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS")
+    connection.client.listTables[IO](connection.databaseId, Option(tableNamePattern))
+      .flatMap(tables => AliyunDmsResultSet(None, columnNames, tables
+        .filter(table => typeFilter.isEmpty || typeFilter.contains(tableType))
+        .map(table => Map(
+          "TABLE_NAME" -> Option(table.getTableName).getOrElse(""),
+          "TABLE_TYPE" -> tableType,
+          "REMARKS" -> ""
+        ))
+      ))
+      .unsafeRunSync()
 
-  def getSchemas: ResultSet = ???
+  def getSchemas: ResultSet = AliyunDmsResultSet.empty("TABLE_SCHEM", "TABLE_CATALOG")
 
-  def getCatalogs: ResultSet = ???
+  def getCatalogs: ResultSet = AliyunDmsResultSet.empty("TABLE_CAT")
 
-  def getTableTypes: ResultSet = ???
+  def getTableTypes: ResultSet =
+    AliyunDmsResultSet(None, Vector("TABLE_TYPE"), List(Map("TABLE_TYPE" -> "TABLE"))).unsafeRunSync()
 
-  def getColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = ???
+  def getColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet =
+    val columnNames: Vector[String] = Vector("TABLE_NAME", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME",
+      "COLUMN_SIZE", "NULLABLE", "REMARKS", "ORDINAL_POSITION")
+    val io =
+      for
+        tables <- connection.client.listTables[IO](connection.databaseId, Option(tableNamePattern))
+        rows <- tables
+          .traverse { table =>
+            Option(table.getTableId).filter(_.nonEmpty).flatMap(Number.fromString).flatMap(_.toLong) match
+              case Some(tableId) => connection.client.listColumns[IO](tableId)
+                .map(columns => columns.zipWithIndex
+                  .filter((column, _) => !Option(columnNamePattern).exists(p => p.nonEmpty && !"%".equals(p)) ||
+                    Option(column.getColumnName).exists(columnName => toRegex(columnNamePattern).matches(columnName)))
+                  .map((column, index) => Map[String, Any](
+                    "TABLE_NAME" -> Option(table.getTableName).getOrElse(""),
+                    "COLUMN_NAME" -> Option(column.getColumnName).getOrElse(""),
+                    "DATA_TYPE" -> Types.VARCHAR,
+                    "TYPE_NAME" -> Option(column.getColumnType).getOrElse("VARCHAR"),
+                    "COLUMN_SIZE" -> 0,
+                    "NULLABLE" -> (
+                      if Option(column.getNullable).exists(_.booleanValue()) then DatabaseMetaData.columnNullable
+                      else DatabaseMetaData.columnNoNulls
+                    ),
+                    "REMARKS" -> Option(column.getDescription).getOrElse(""),
+                    "ORDINAL_POSITION" -> (index + 1)
+                  )))
+              case _ => IO(Nil)
+          }
+          .map(_.flatten)
+        res <- AliyunDmsResultSet(None, columnNames, rows)
+      yield
+        res
+    io.unsafeRunSync()
 
-  def getColumnPrivileges(catalog: String, schema: String, table: String, columnNamePattern: String): ResultSet = ???
+  def getColumnPrivileges(catalog: String, schema: String, table: String, columnNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "GRANTOR", "GRANTEE", "PRIVILEGE", "IS_GRANTABLE")
 
-  def getTablePrivileges(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = ???
+  def getTablePrivileges(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "GRANTOR", "GRANTEE", "PRIVILEGE", "IS_GRANTABLE")
 
-  def getBestRowIdentifier(catalog: String, schema: String, table: String, scope: Int, nullable: Boolean): ResultSet = ???
+  def getBestRowIdentifier(catalog: String, schema: String, table: String, scope: Int, nullable: Boolean): ResultSet =
+    AliyunDmsResultSet.empty("SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH")
 
-  def getVersionColumns(catalog: String, schema: String, table: String): ResultSet = ???
+  def getVersionColumns(catalog: String, schema: String, table: String): ResultSet =
+    AliyunDmsResultSet.empty("SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH")
 
-  def getPrimaryKeys(catalog: String, schema: String, table: String): ResultSet = ???
+  def getPrimaryKeys(catalog: String, schema: String, table: String): ResultSet =
+    AliyunDmsResultSet.empty("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME")
 
-  def getImportedKeys(catalog: String, schema: String, table: String): ResultSet = ???
+  def getImportedKeys(catalog: String, schema: String, table: String): ResultSet =
+    AliyunDmsResultSet.empty("PKTABLE_CAT", "PKTABLE_SCHEM", "PKTABLE_NAME", "PKCOLUMN_NAME",
+      "FKTABLE_CAT", "FKTABLE_SCHEM", "FKTABLE_NAME", "FKCOLUMN_NAME",
+      "KEY_SEQ", "UPDATE_RULE", "DELETE_RULE", "FK_NAME", "PK_NAME", "DEFERRABILITY")
 
-  def getExportedKeys(catalog: String, schema: String, table: String): ResultSet = ???
+  def getExportedKeys(catalog: String, schema: String, table: String): ResultSet =
+    AliyunDmsResultSet.empty("PKTABLE_CAT", "PKTABLE_SCHEM", "PKTABLE_NAME", "PKCOLUMN_NAME",
+      "FKTABLE_CAT", "FKTABLE_SCHEM", "FKTABLE_NAME", "FKCOLUMN_NAME",
+      "KEY_SEQ", "UPDATE_RULE", "DELETE_RULE", "FK_NAME", "PK_NAME", "DEFERRABILITY")
 
-  def getCrossReference(parentCatalog: String, parentSchema: String, parentTable: String, foreignCatalog: String, foreignSchema: String, foreignTable: String): ResultSet = ???
+  def getCrossReference(parentCatalog: String, parentSchema: String, parentTable: String, foreignCatalog: String, foreignSchema: String, foreignTable: String): ResultSet =
+    AliyunDmsResultSet.empty("PKTABLE_CAT", "PKTABLE_SCHEM", "PKTABLE_NAME", "PKCOLUMN_NAME",
+      "FKTABLE_CAT", "FKTABLE_SCHEM", "FKTABLE_NAME", "FKCOLUMN_NAME",
+      "KEY_SEQ", "UPDATE_RULE", "DELETE_RULE", "FK_NAME", "PK_NAME", "DEFERRABILITY")
 
-  def getTypeInfo: ResultSet = ???
+  def getTypeInfo: ResultSet =
+    AliyunDmsResultSet.empty("TYPE_NAME", "DATA_TYPE", "PRECISION", "LITERAL_PREFIX", "LITERAL_SUFFIX",
+      "CREATE_PARAMS", "NULLABLE", "CASE_SENSITIVE", "SEARCHABLE", "UNSIGNED_ATTRIBUTE",
+      "FIXED_PREC_SCALE", "AUTO_INCREMENT", "LOCAL_TYPE_NAME", "MINIMUM_SCALE", "MAXIMUM_SCALE",
+      "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "NUM_PREC_RADIX")
 
-  def getIndexInfo(catalog: String, schema: String, table: String, unique: Boolean, approximate: Boolean): ResultSet = ???
+  def getIndexInfo(catalog: String, schema: String, table: String, unique: Boolean, approximate: Boolean): ResultSet =
+    AliyunDmsResultSet.empty("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "NON_UNIQUE", "INDEX_QUALIFIER",
+      "INDEX_NAME", "TYPE", "ORDINAL_POSITION", "COLUMN_NAME", "ASC_OR_DESC",
+      "CARDINALITY", "PAGES", "FILTER_CONDITION")
 
-  def supportsResultSetType(`type`: Int): Boolean = ???
+  def supportsResultSetType(`type`: Int): Boolean = `type` == ResultSet.TYPE_SCROLL_INSENSITIVE
 
-  def supportsResultSetConcurrency(`type`: Int, concurrency: Int): Boolean = ???
+  def supportsResultSetConcurrency(`type`: Int, concurrency: Int): Boolean =
+    `type` == ResultSet.TYPE_SCROLL_INSENSITIVE && concurrency == ResultSet.CONCUR_READ_ONLY
 
-  def ownUpdatesAreVisible(`type`: Int): Boolean = ???
+  def ownUpdatesAreVisible(`type`: Int): Boolean = false
 
-  def ownDeletesAreVisible(`type`: Int): Boolean = ???
+  def ownDeletesAreVisible(`type`: Int): Boolean = false
 
-  def ownInsertsAreVisible(`type`: Int): Boolean = ???
+  def ownInsertsAreVisible(`type`: Int): Boolean = false
 
-  def othersUpdatesAreVisible(`type`: Int): Boolean = ???
+  def othersUpdatesAreVisible(`type`: Int): Boolean = false
 
-  def othersDeletesAreVisible(`type`: Int): Boolean = ???
+  def othersDeletesAreVisible(`type`: Int): Boolean = false
 
-  def othersInsertsAreVisible(`type`: Int): Boolean = ???
+  def othersInsertsAreVisible(`type`: Int): Boolean = false
 
-  def updatesAreDetected(`type`: Int): Boolean = ???
+  def updatesAreDetected(`type`: Int): Boolean = false
 
-  def deletesAreDetected(`type`: Int): Boolean = ???
+  def deletesAreDetected(`type`: Int): Boolean = false
 
-  def insertsAreDetected(`type`: Int): Boolean = ???
+  def insertsAreDetected(`type`: Int): Boolean = false
 
-  def supportsBatchUpdates(): Boolean = ???
+  def supportsBatchUpdates(): Boolean = false
 
-  def getUDTs(catalog: String, schemaPattern: String, typeNamePattern: String, types: Array[Int]): ResultSet = ???
+  def getUDTs(catalog: String, schemaPattern: String, typeNamePattern: String, types: Array[Int]): ResultSet =
+    AliyunDmsResultSet.empty("TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE", "REMARKS", "BASE_TYPE")
 
-  def getConnection: Connection = ???
+  def getConnection: Connection = connection
 
-  def supportsSavepoints(): Boolean = ???
+  def supportsSavepoints(): Boolean = false
 
-  def supportsNamedParameters(): Boolean = ???
+  def supportsNamedParameters(): Boolean = false
 
-  def supportsMultipleOpenResults(): Boolean = ???
+  def supportsMultipleOpenResults(): Boolean = false
 
-  def supportsGetGeneratedKeys(): Boolean = ???
+  def supportsGetGeneratedKeys(): Boolean = false
 
-  def getSuperTypes(catalog: String, schemaPattern: String, typeNamePattern: String): ResultSet = ???
+  def getSuperTypes(catalog: String, schemaPattern: String, typeNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "SUPERTYPE_CAT", "SUPERTYPE_SCHEM", "SUPERTYPE_NAME")
 
-  def getSuperTables(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = ???
+  def getSuperTables(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "SUPERTABLE_NAME")
 
-  def getAttributes(catalog: String, schemaPattern: String, typeNamePattern: String, attributeNamePattern: String): ResultSet = ???
+  def getAttributes(catalog: String, schemaPattern: String, typeNamePattern: String, attributeNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "ATTR_NAME", "DATA_TYPE", "ATTR_TYPE_NAME")
 
-  def supportsResultSetHoldability(holdability: Int): Boolean = ???
+  def supportsResultSetHoldability(holdability: Int): Boolean = holdability == ResultSet.HOLD_CURSORS_OVER_COMMIT
 
-  def getResultSetHoldability: Int = ???
+  def getResultSetHoldability: Int = ResultSet.HOLD_CURSORS_OVER_COMMIT
 
-  def getDatabaseMajorVersion: Int = ???
+  def getDatabaseMajorVersion: Int = 1
 
-  def getDatabaseMinorVersion: Int = ???
+  def getDatabaseMinorVersion: Int = 0
 
-  def getJDBCMajorVersion: Int = ???
+  def getJDBCMajorVersion: Int = 4
 
-  def getJDBCMinorVersion: Int = ???
+  def getJDBCMinorVersion: Int = 2
 
-  def getSQLStateType: Int = ???
+  def getSQLStateType: Int = DatabaseMetaData.sqlStateSQL
 
-  def locatorsUpdateCopy(): Boolean = ???
+  def locatorsUpdateCopy(): Boolean = false
 
-  def supportsStatementPooling(): Boolean = ???
+  def supportsStatementPooling(): Boolean = false
 
-  def getRowIdLifetime: RowIdLifetime = ???
+  def getRowIdLifetime: RowIdLifetime = RowIdLifetime.ROWID_UNSUPPORTED
 
-  def getSchemas(catalog: String, schemaPattern: String): ResultSet = ???
+  def getSchemas(catalog: String, schemaPattern: String): ResultSet =
+    AliyunDmsResultSet.empty("TABLE_SCHEM", "TABLE_CATALOG")
 
-  def supportsStoredFunctionsUsingCallSyntax(): Boolean = ???
+  def supportsStoredFunctionsUsingCallSyntax(): Boolean = false
 
-  def autoCommitFailureClosesAllResultSets(): Boolean = ???
+  def autoCommitFailureClosesAllResultSets(): Boolean = false
 
-  def getClientInfoProperties: ResultSet = ???
+  def getClientInfoProperties: ResultSet =
+    AliyunDmsResultSet.empty("NAME", "MAX_LEN", "DEFAULT_VALUE", "DESCRIPTION")
 
-  def getFunctions(catalog: String, schemaPattern: String, functionNamePattern: String): ResultSet = ???
+  def getFunctions(catalog: String, schemaPattern: String, functionNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("FUNCTION_CAT", "FUNCTION_SCHEM", "FUNCTION_NAME", "REMARKS", "FUNCTION_TYPE", "SPECIFIC_NAME")
 
-  def getFunctionColumns(catalog: String, schemaPattern: String, functionNamePattern: String, columnNamePattern: String): ResultSet = ???
+  def getFunctionColumns(catalog: String, schemaPattern: String, functionNamePattern: String, columnNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("FUNCTION_CAT", "FUNCTION_SCHEM", "FUNCTION_NAME", "COLUMN_NAME", "COLUMN_TYPE", "DATA_TYPE", "TYPE_NAME")
 
-  def getPseudoColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = ???
+  def getPseudoColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet =
+    AliyunDmsResultSet.empty("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "DATA_TYPE", "COLUMN_SIZE")
 
-  def generatedKeyAlwaysReturned(): Boolean = ???
+  def generatedKeyAlwaysReturned(): Boolean = false
 
-  def unwrap[T](iface: Class[T]): T = ???
+  def unwrap[T](iface: Class[T]): T = handleUnwrap(iface)
 
-  def isWrapperFor(iface: Class[?]): Boolean = ???
-end AliyunDmsDatabaseMetaData
-object AliyunDmsDatabaseMetaData:
-  def apply(connection: AliyunDmsConnection): AliyunDmsDatabaseMetaData = AliyunDmsDatabaseMetaData()
+  def isWrapperFor(iface: Class[?]): Boolean = iface.isInstance(this)
 end AliyunDmsDatabaseMetaData

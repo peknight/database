@@ -544,9 +544,11 @@ object AliyunDmsResultSet:
                                 started: Boolean = false,
                                 lastReadWasNull: Boolean = false,
                                 closed: Boolean = false)
-  def apply(statement: Option[Statement], columnNames: Vector[String], rows: List[Map[String, Any]]): AliyunDmsResultSet =
+  def apply(statement: Option[Statement], columnNames: Vector[String], rows: List[Map[String, Any]])
+  : IO[AliyunDmsResultSet] =
     AtomicCell[IO]
       .of(State(rows))
       .map(stateCell => AliyunDmsResultSet(statement, columnNames, rows, stateCell))
-      .unsafeRunSync()
+
+  def empty(columnNames: String*): AliyunDmsResultSet = apply(None, Vector.from(columnNames), Nil).unsafeRunSync()
 end AliyunDmsResultSet
