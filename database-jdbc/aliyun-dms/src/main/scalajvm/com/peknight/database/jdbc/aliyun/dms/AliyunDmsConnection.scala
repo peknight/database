@@ -137,9 +137,8 @@ case class AliyunDmsConnection(client: AliyunDmsClient, databaseId: Int, closedC
     throw new SQLFeatureNotSupportedException("DMS dose not support transactions")
 end AliyunDmsConnection
 object AliyunDmsConnection:
-  def apply(client: AliyunDmsClient, databaseId: Int): AliyunDmsConnection =
+  def apply(client: AliyunDmsClient, databaseId: Int): IO[AliyunDmsConnection] =
     AtomicCell[IO]
       .of[Boolean](false)
       .map(closedCell => AliyunDmsConnection(client, databaseId, closedCell))
-      .unsafeRunSync()
 end AliyunDmsConnection

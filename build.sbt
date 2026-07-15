@@ -36,8 +36,9 @@ lazy val databaseJdbc = (project in file("database-jdbc"))
 lazy val databaseJdbcAliyunDms = (projectMatrix in file("database-jdbc/aliyun-dms"))
   .settings(name := "jdbc-aliyun-dms")
   .settings(libraryDependencies ++= dependencies(
-      peknight.codec,
-      typelevel.catsEffect,
+    peknight.codec,
+    http4s,
+    typelevel.catsEffect,
   ))
   .settings(libraryDependencies ++= jvmDependencies(aliyun.dmsEnterprise))
   .jvmPlatform(scalaVersions = Seq(scala.scala3.version))
