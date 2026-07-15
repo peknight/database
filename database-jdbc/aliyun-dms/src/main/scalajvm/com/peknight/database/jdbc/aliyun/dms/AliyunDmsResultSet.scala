@@ -455,8 +455,8 @@ case class AliyunDmsResultSet(
   private def checkClosed(state: State): IO[Unit] =
     if state.closed then IO.raiseError(new SQLException("ResultSet is closed")) else IO.unit
 
-  private def checkClosed[A](f: State => (State, A)): A =
-    stateCell.evalModify[A](state => checkClosed(state).map(_ => f(state))).unsafeRunSync()
+  private def checkClosed[T](f: State => (State, T)): T =
+    stateCell.evalModify[T](state => checkClosed(state).map(_ => f(state))).unsafeRunSync()
 
   private def rawValue(columnIndex: Int): IO[Option[Any]] =
     if columnIndex < 1 || columnIndex > columnNames.size then

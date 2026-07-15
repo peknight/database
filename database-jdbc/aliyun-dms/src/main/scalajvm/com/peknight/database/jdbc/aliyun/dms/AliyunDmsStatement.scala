@@ -15,19 +15,9 @@ trait AliyunDmsStatement extends Statement:
   protected def connection: AliyunDmsConnection
   protected def stateCell: AtomicCell[IO, State]
 
-  def executeQuery(sql: String): ResultSet =
-    closeCurrentResultSet { state =>
-      for
-        result <- connection.client.executeScript[IO](connection.databaseId, sql)
-        currentResultSet <- AliyunDmsResultSet(this.some, result.columnNames, result.rows)
-      yield
-        (state.copy(currentResultSet = currentResultSet.some, updateCount = None), currentResultSet)
-    }
+  def executeQuery(sql: String): ResultSet = handleExecuteQuery(sql).unsafeRunSync()
 
-  def executeUpdate(sql: String): Int =
-    closeCurrentResultSet(state => connection.client.executeScript[IO](connection.databaseId, sql).map(result =>
-      (state.copy(updateCount = result.rowCount.some), result.rowCount.toInt)
-    ))
+  def executeUpdate(sql: String): Int = handleExecuteUpdate(sql).unsafeRunSync()
 
   def close(): Unit =
     stateCell.evalUpdate(state => state.currentResultSet
@@ -58,13 +48,7 @@ trait AliyunDmsStatement extends Statement:
 
   def setCursorName(name: String): Unit = throw new SQLFeatureNotSupportedException("Cursor not supported")
 
-  def execute(sql: String): Boolean =
-    closeCurrentResultSet(state => connection.client.executeScript[IO](connection.databaseId, sql).flatMap(result =>
-      if result.columnNames.nonEmpty then
-        AliyunDmsResultSet(this.some, result.columnNames, result.rows)
-          .map(currentResultSet => (state.copy(currentResultSet = currentResultSet.some, updateCount = None), true))
-      else IO((state.copy(updateCount = result.rowCount.some), false))
-    ))
+  def execute(sql: String): Boolean = handleExecute(sql).unsafeRunSync()
 
   def getResultSet: ResultSet = checkClosed(state => (state, state.currentResultSet)).orNull
 
@@ -125,22 +109,44 @@ trait AliyunDmsStatement extends Statement:
 
   def isWrapperFor(iface: Class[?]): Boolean = iface.isInstance(this)
 
-  private def checkClosed[A](f: State => (State, A)): A =
-    stateCell.evalModify[A](state =>
+  protected def handleExecuteQuery(sql: String): IO[ResultSet] =
+    closeCurrentResultSet { state =>
+      for
+        result <- connection.client.executeScript[IO](connection.databaseId, sql)
+        currentResultSet <- AliyunDmsResultSet(this.some, result.columnNames, result.rows)
+      yield
+        (state.copy(currentResultSet = currentResultSet.some, updateCount = None), currentResultSet)
+    }
+
+  protected def handleExecuteUpdate(sql: String): IO[Int] =
+    closeCurrentResultSet(state => connection.client.executeScript[IO](connection.databaseId, sql).map(result =>
+      (state.copy(updateCount = result.rowCount.some), result.rowCount.toInt)
+    ))
+
+  protected def handleExecute(sql: String): IO[Boolean] =
+    closeCurrentResultSet(state => connection.client.executeScript[IO](connection.databaseId, sql).flatMap(result =>
+      if result.columnNames.nonEmpty then
+        AliyunDmsResultSet(this.some, result.columnNames, result.rows)
+          .map(currentResultSet => (state.copy(currentResultSet = currentResultSet.some, updateCount = None), true))
+      else IO((state.copy(updateCount = result.rowCount.some), false))
+    ))
+
+  private def checkClosed[T](f: State => (State, T)): T =
+    stateCell.evalModify[T](state =>
       if state.closed then IO.raiseError(new SQLException("Statement is closed")) else IO(f(state))
     ).unsafeRunSync()
 
-  private def closeCurrentResultSet[A](f: State => IO[(State, A)]): A =
-    stateCell.evalModify[A](state =>
+  private def closeCurrentResultSet[T](f: State => IO[(State, T)]): IO[T] =
+    stateCell.evalModify[T](state =>
       if state.closed then IO.raiseError(new SQLException("Statement is closed"))
       else
         state.currentResultSet match
           case Some(currentResultSet) => currentResultSet.stateCell.update(s => s.copy(closed = true))
             .flatMap(_ => f(state.copy(currentResultSet = None)))
           case _ => f(state)
-    ).unsafeRunSync()
+    )
 
-  private def notSupportBatch[A]: A =
+  protected def notSupportBatch[T]: T =
     throw new SQLFeatureNotSupportedException("Batch not supported")
 
 end AliyunDmsStatement

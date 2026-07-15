@@ -128,12 +128,12 @@ case class AliyunDmsConnection(client: AliyunDmsClient, databaseId: Int, closedC
 
   def isWrapperFor(iface: Class[?]): Boolean = iface.isInstance(this)
 
-  private def checkClosed[A](a: IO[A]) =
+  private def checkClosed[T](t: IO[T]) =
     closedCell.get
-      .flatMap(closed => if closed then IO.raiseError(new SQLException("Connection is closed")) else a)
+      .flatMap(closed => if closed then IO.raiseError(new SQLException("Connection is closed")) else t)
       .unsafeRunSync()
 
-  private def notSupportTransactions[A]: A =
+  private def notSupportTransactions[T]: T =
     throw new SQLFeatureNotSupportedException("DMS dose not support transactions")
 end AliyunDmsConnection
 object AliyunDmsConnection:
