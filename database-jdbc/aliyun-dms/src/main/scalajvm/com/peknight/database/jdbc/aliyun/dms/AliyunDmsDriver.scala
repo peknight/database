@@ -31,7 +31,7 @@ class AliyunDmsDriver extends Driver:
       }.getOrElse(new Properties)
       val io =
         for
-          uri <- IO(Uri.fromString(url.drop(urlPrefix.length)).left.map(parseFailure => new SQLException(s"Invalid URL: $url", parseFailure)))
+          uri <- IO(Uri.fromString(url.drop(5)).left.map(parseFailure => new SQLException(s"Invalid URL: $url", parseFailure)))
             .rethrow
           regionId = uri.query.params.get("regionId").orElse(uri.host.map(_.value)).getOrElse("cn-hangzhou")
           segment <- IO(uri.path.segments.headOption.toRight(new SQLException(s"Missing databaseId in URL: $url")))
