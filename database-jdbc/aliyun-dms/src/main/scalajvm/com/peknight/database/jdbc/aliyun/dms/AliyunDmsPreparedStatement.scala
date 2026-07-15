@@ -1,5 +1,9 @@
 package com.peknight.database.jdbc.aliyun.dms
 
+import cats.effect.IO
+import cats.effect.std.AtomicCell
+import com.peknight.database.jdbc.aliyun.dms.AliyunDmsStatement.State
+
 import java.io.{InputStream, Reader}
 import java.net.URL
 import java.sql
@@ -11,7 +15,9 @@ import java.util.Calendar
  *
  * 参数在客户端拼接到 SQL，DMS 不支持服务端参数化
  */
-case class AliyunDmsPreparedStatement() extends AliyunDmsStatement with PreparedStatement:
+case class AliyunDmsPreparedStatement(connection: AliyunDmsConnection, rawSql: String, stateCell: AtomicCell[IO, State])
+  extends AliyunDmsStatement with PreparedStatement:
+
   def executeQuery(): ResultSet = ???
 
   def executeUpdate(): Int = ???
@@ -123,5 +129,8 @@ case class AliyunDmsPreparedStatement() extends AliyunDmsStatement with Prepared
   def setNClob(parameterIndex: Int, reader: Reader): Unit = ???
 end AliyunDmsPreparedStatement
 object AliyunDmsPreparedStatement:
-  def apply(connection: AliyunDmsConnection, rawSql: String): AliyunDmsPreparedStatement = AliyunDmsPreparedStatement()
+  def apply(connection: AliyunDmsConnection, rawSql: String): IO[AliyunDmsPreparedStatement] =
+    AtomicCell[IO]
+      .of(State())
+      .map(stateCell => AliyunDmsPreparedStatement(connection, rawSql, stateCell))
 end AliyunDmsPreparedStatement

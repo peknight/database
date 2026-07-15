@@ -37,7 +37,7 @@ case class AliyunDmsConnection(client: AliyunDmsClient, databaseId: Int, closedC
 
   def isClosed: Boolean = closedCell.get.unsafeRunSync()
 
-  def getMetaData: DatabaseMetaData = checkClosed(AliyunDmsDatabaseMetaData(this))
+  def getMetaData: DatabaseMetaData = checkClosed(IO(AliyunDmsDatabaseMetaData(this)))
 
   def setReadOnly(readOnly: Boolean): Unit = ()
 
@@ -128,9 +128,9 @@ case class AliyunDmsConnection(client: AliyunDmsClient, databaseId: Int, closedC
 
   def isWrapperFor(iface: Class[?]): Boolean = iface.isInstance(this)
 
-  private def checkClosed[A](a: => A) =
+  private def checkClosed[A](a: IO[A]) =
     closedCell.get
-      .flatMap(closed => if closed then IO.raiseError(new SQLException("Connection is closed")) else IO(a))
+      .flatMap(closed => if closed then IO.raiseError(new SQLException("Connection is closed")) else a)
       .unsafeRunSync()
 
   private def notSupportTransactions[A]: A =

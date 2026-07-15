@@ -1,11 +1,18 @@
 package com.peknight.database.jdbc.aliyun.dms
 
+import cats.effect.IO
+import cats.effect.std.AtomicCell
+import com.peknight.database.jdbc.aliyun.dms.AliyunDmsStatement.State
+
 import java.sql.{Connection, ResultSet, SQLWarning, Statement}
 
 /**
  * DMS JDBC Statement
  */
 trait AliyunDmsStatement extends Statement:
+  protected def connection: AliyunDmsConnection
+  protected def stateCell: AtomicCell[IO, State]
+
   def executeQuery(sql: String): ResultSet = ???
 
   def executeUpdate(sql: String): Int = ???
@@ -95,6 +102,13 @@ trait AliyunDmsStatement extends Statement:
   def isWrapperFor(iface: Class[?]): Boolean = ???
 end AliyunDmsStatement
 object AliyunDmsStatement:
-  case class AliyunDmsStatement() extends com.peknight.database.jdbc.aliyun.dms.AliyunDmsStatement
-  def apply(connection: AliyunDmsConnection): com.peknight.database.jdbc.aliyun.dms.AliyunDmsStatement = AliyunDmsStatement()
+  private[dms] case class State(currentResultSet: Option[AliyunDmsResultSet] = None,
+                                updateCount: Option[Long] = None,
+                                closed: Boolean = false)
+  case class AliyunDmsStatement(connection: AliyunDmsConnection, stateCell: AtomicCell[IO, State])
+    extends com.peknight.database.jdbc.aliyun.dms.AliyunDmsStatement
+  def apply(connection: AliyunDmsConnection): IO[com.peknight.database.jdbc.aliyun.dms.AliyunDmsStatement] =
+    AtomicCell[IO]
+      .of(State())
+      .map(stateCell => AliyunDmsStatement(connection, stateCell))
 end AliyunDmsStatement
