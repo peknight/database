@@ -1,17 +1,16 @@
 package com.peknight.database.jdbc.aliyun.dms
 
 import cats.effect.IO
-
-import scala.jdk.CollectionConverters.*
-import com.peknight.codec.number.Number
 import cats.effect.unsafe.implicits.global
+import com.peknight.codec.number.Number
 import com.peknight.database.jdbc.aliyun.dms.AliyunDmsDriver.urlPrefix
 import org.http4s.Uri
 
-import java.sql.{Connection, Driver, DriverManager, DriverPropertyInfo, SQLException}
+import java.sql.{Array as _, *}
 import java.util.Properties
 import java.util.logging.Logger
-import scala.util.Try
+import scala.jdk.CollectionConverters.*
+import scala.util.{Failure, Try}
 
 /**
  * DMS JDBC Driver
@@ -85,7 +84,7 @@ class AliyunDmsDriver extends Driver:
 end AliyunDmsDriver
 object AliyunDmsDriver:
   private[dms] val urlPrefix = "jdbc:aliyun-dms://"
-  IO.blocking(Try(DriverManager.registerDriver(new AliyunDmsDriver)).toEither.left.map(e =>
-    new RuntimeException("Failed to register DmsDriver", e)
-  )).unsafeRunSync()
+  Try(DriverManager.registerDriver(new AliyunDmsDriver)) match
+    case Failure(exception) => throw new RuntimeException("Failed to register DmsDriver", exception)
+    case _ => ()
 end AliyunDmsDriver
