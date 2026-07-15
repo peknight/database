@@ -142,7 +142,7 @@ case class AliyunDmsResultSet(
   def isFirst: Boolean = stateCell.get.map(state => state.started && state.consumedRows.isEmpty).unsafeRunSync()
 
   def isLast: Boolean =
-    stateCell.get.map(state => (rows.isEmpty && !state.started) || state.pendingRows.size == 1).unsafeRunSync()
+    stateCell.get.map(state => state.started && state.pendingRows.size == 1).unsafeRunSync()
 
   def beforeFirst(): Unit =
     checkClosed[Unit](state => (State(rows, Nil, false, state.lastReadWasNull, state.closed), ()))

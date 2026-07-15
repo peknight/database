@@ -134,7 +134,7 @@ case class AliyunDmsConnection(client: AliyunDmsClient, databaseId: Int, closedC
       .unsafeRunSync()
 
   private def notSupportTransactions[T]: T =
-    throw new SQLFeatureNotSupportedException("DMS dose not support transactions")
+    throw new SQLFeatureNotSupportedException("DMS does not support transactions")
 end AliyunDmsConnection
 object AliyunDmsConnection:
   def apply(client: AliyunDmsClient, databaseId: Int): IO[AliyunDmsConnection] =

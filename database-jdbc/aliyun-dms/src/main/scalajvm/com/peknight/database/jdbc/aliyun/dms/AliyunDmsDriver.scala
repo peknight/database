@@ -22,6 +22,7 @@ import scala.util.Try
  * 查询参数（?key=value）可覆盖 URL 中的 regionId
  */
 class AliyunDmsDriver extends Driver:
+  AliyunDmsDriver
   def connect(url: String, info: Properties): Connection =
     if acceptsURL(url) then
       val merged: Properties = Option(info).map { i =>
@@ -31,7 +32,7 @@ class AliyunDmsDriver extends Driver:
       }.getOrElse(new Properties)
       val io =
         for
-          uri <- IO(Uri.fromString(url).left.map(parseFailure => new SQLException(s"Invalid URL: $url", parseFailure)))
+          uri <- IO(Uri.fromString(url.drop(urlPrefix.length)).left.map(parseFailure => new SQLException(s"Invalid URL: $url", parseFailure)))
             .rethrow
           regionId = uri.query.params.get("regionId").orElse(uri.host.map(_.value)).getOrElse("cn-hangzhou")
           segment <- IO(uri.path.segments.headOption.toRight(new SQLException(s"Missing databaseId in URL: $url")))

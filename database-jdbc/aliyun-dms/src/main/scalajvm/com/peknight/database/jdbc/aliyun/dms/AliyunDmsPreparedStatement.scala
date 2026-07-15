@@ -142,7 +142,7 @@ case class AliyunDmsPreparedStatement(connection: AliyunDmsConnection,
 
   def setSQLXML(parameterIndex: Int, xmlObject: SQLXML): Unit = notSupported
 
-  def setObject(parameterIndex: Int, x: Any, targetSqlType: Int, scaleOrLength: Int): Unit = 
+  def setObject(parameterIndex: Int, x: Any, targetSqlType: Int, scaleOrLength: Int): Unit =
     setObject(parameterIndex, x)
 
   def setAsciiStream(parameterIndex: Int, x: InputStream, length: Long): Unit = notSupported
@@ -183,7 +183,7 @@ case class AliyunDmsPreparedStatement(connection: AliyunDmsConnection,
     value match
       case None => "NULL"
       case Some(v: String) => s"'$v'"
-      case Some(v: (Byte | Short | Int | Long | Float | Double | Boolean | Number | java.lang.Boolean)) => v.toString
+      case Some(v: (Boolean | Number)) => v.toString
       case Some(v) => s"'${escapeString(v.toString)}'"
 
   private def escapeString(value: String): String = value.replace("\\", "\\\\").replace("'", "''")
