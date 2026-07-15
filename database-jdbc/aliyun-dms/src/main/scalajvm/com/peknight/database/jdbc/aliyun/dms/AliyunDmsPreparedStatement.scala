@@ -6,6 +6,11 @@ import java.sql
 import java.sql.{Array as _, *}
 import java.util.Calendar
 
+/**
+ * DMS JDBC PreparedStatement
+ *
+ * 参数在客户端拼接到 SQL，DMS 不支持服务端参数化
+ */
 case class AliyunDmsPreparedStatement() extends AliyunDmsStatement with PreparedStatement:
   def executeQuery(): ResultSet = ???
 

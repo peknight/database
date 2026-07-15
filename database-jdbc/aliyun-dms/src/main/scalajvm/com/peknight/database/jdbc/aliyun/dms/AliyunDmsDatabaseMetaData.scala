@@ -2,6 +2,11 @@ package com.peknight.database.jdbc.aliyun.dms
 
 import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
 
+/**
+ * DMS JDBC DatabaseMetaData
+ *
+ * 实现 getTables() 和 getColumns()，其他方法返回空结果或抛不支持
+ */
 case class AliyunDmsDatabaseMetaData() extends DatabaseMetaData:
   def allProceduresAreCallable(): Boolean = ???
 

@@ -2,6 +2,9 @@ package com.peknight.database.jdbc.aliyun.dms
 
 import java.sql.{Connection, ResultSet, SQLWarning, Statement}
 
+/**
+ * DMS JDBC Statement
+ */
 trait AliyunDmsStatement extends Statement:
   def executeQuery(sql: String): ResultSet = ???
 
