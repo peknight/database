@@ -1,6 +1,6 @@
 package com.peknight.database.jdbc.aliyun.dms
 
-import java.sql.{ResultSetMetaData, SQLException, Types}
+import java.sql.{ResultSetMetaData, Types}
 
 /**
  * DMS JDBC ResultSetMetaData
@@ -11,49 +11,47 @@ case class AliyunDmsResultSetMetaData(columnNames: Vector[String]) extends Resul
 
   def getColumnCount: Int = columnNames.size
 
-  def isAutoIncrement(column: Int) = false
+  def isAutoIncrement(column: Int): Boolean = false
 
-  def isCaseSensitive(column: Int) = true
+  def isCaseSensitive(column: Int): Boolean = true
 
-  def isSearchable(column: Int) = true
+  def isSearchable(column: Int): Boolean = true
 
-  def isCurrency(column: Int) = false
+  def isCurrency(column: Int): Boolean = false
 
   def isNullable(column: Int): Int = ResultSetMetaData.columnNullableUnknown
 
-  def isSigned(column: Int) = false
+  def isSigned(column: Int): Boolean = false
 
-  def getColumnDisplaySize(column: Int) = 0
+  def getColumnDisplaySize(column: Int): Int = 0
 
   def getColumnLabel(column: Int): String = columnNames(column - 1)
 
   def getColumnName(column: Int): String = columnNames(column - 1)
 
-  def getSchemaName(column: Int) = ""
+  def getSchemaName(column: Int): String = ""
 
-  def getPrecision(column: Int) = 0
+  def getPrecision(column: Int): Int = 0
 
-  def getScale(column: Int) = 0
+  def getScale(column: Int): Int = 0
 
-  def getTableName(column: Int) = ""
+  def getTableName(column: Int): String = ""
 
-  def getCatalogName(column: Int) = ""
+  def getCatalogName(column: Int): String = ""
 
   def getColumnType(column: Int): Int = Types.VARCHAR
 
-  def getColumnTypeName(column: Int) = "VARCHAR"
+  def getColumnTypeName(column: Int): String = "VARCHAR"
 
-  def isReadOnly(column: Int) = true
+  def isReadOnly(column: Int): Boolean = true
 
-  def isWritable(column: Int) = false
+  def isWritable(column: Int): Boolean = false
 
-  def isDefinitelyWritable(column: Int) = false
+  def isDefinitelyWritable(column: Int): Boolean = false
 
   def getColumnClassName(column: Int): String = classOf[String].getName
 
-  def unwrap[T](iface: Class[T]): T =
-    if iface.isInstance(this) then iface.cast(this)
-    else throw new SQLException(s"Cannot unwrap to ${iface.getName}")
+  def unwrap[T](iface: Class[T]): T = handleUnwrap(iface)
 
   def isWrapperFor(iface: Class[?]): Boolean = iface.isInstance(this)
 end AliyunDmsResultSetMetaData

@@ -16,6 +16,11 @@ import java.{sql, util}
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
+/**
+ * DMS JDBC ResultSet
+ *
+ * 内部持有 rows: List[Map[String, Object]] + columnNames: List[String]
+ */
 case class AliyunDmsResultSet(
                                statement: Option[Statement],
                                columnNames: Vector[String],
@@ -443,9 +448,7 @@ case class AliyunDmsResultSet(
 
   def getObject[T](columnLabel: String, `type`: Class[T]): T = getObject[T](rawValue(columnLabel), `type`)
 
-  def unwrap[T](iface: Class[T]): T =
-    if iface.isInstance(this) then iface.cast(this)
-    else throw new SQLException(s"Cannot unwrap to ${iface.getName}")
+  def unwrap[T](iface: Class[T]): T = handleUnwrap(iface)
 
   def isWrapperFor(iface: Class[?]): Boolean = iface.isInstance(this)
 
@@ -532,7 +535,6 @@ case class AliyunDmsResultSet(
         case _ => state
   end relative
 
-  private def notSupported[T]: T = throw new SQLFeatureNotSupportedException()
   private def readOnly[T]: T = throw new SQLFeatureNotSupportedException("ResultSet is read-only")
 end AliyunDmsResultSet
 
