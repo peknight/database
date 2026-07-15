@@ -13,6 +13,7 @@ enum DatabaseType(val port: Option[Port], val driver: String):
   case postgresql extends DatabaseType(port"5432".some, "org.postgresql.Driver")
   case mysql extends DatabaseType(port"3306".some, "com.mysql.cj.jdbc.Driver")
   case clickhouse extends DatabaseType(port"8123".some, "com.clickhouse.jdbc.ClickHouseDriver")
+  case `aliyun-dms` extends DatabaseType(none[Port], "com.peknight.database.jdbc.aliyun.dms.AliyunDmsDriver")
 end DatabaseType
 object DatabaseType:
   given stringCodecDatabaseType[F[_]: Applicative]: Codec[F, String, String, DatabaseType] =
