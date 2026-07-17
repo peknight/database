@@ -1,17 +1,15 @@
 package com.peknight.database.config
 
-import cats.effect.std.Env
-import cats.{Applicative, Monad, MonadError, Show}
+import cats.{Applicative, Monad, Show}
 import com.comcast.ip4s.{Host, Port}
 import com.peknight.auth.{Password, User}
 import com.peknight.codec.config.given
 import com.peknight.codec.cursor.Cursor
-import com.peknight.codec.effect.instances.envReader.given
 import com.peknight.codec.error.DecodingFailure
 import com.peknight.codec.ip4s.instances.host.given
 import com.peknight.codec.ip4s.instances.port.given
 import com.peknight.codec.obj.Object
-import com.peknight.codec.reader.Key
+import com.peknight.codec.reader.{Key, Reader}
 import com.peknight.codec.sum.*
 import com.peknight.codec.{Codec, Decoder}
 import com.peknight.data.Identifier
@@ -64,6 +62,6 @@ object DatabaseConfig:
   : Codec[F, S, Cursor[S], DatabaseConfig] =
     Codec.derived[F, S, DatabaseConfig]
 
-  given keyDecodeDatabaseConfig[F[_]](using MonadError[F, Throwable], Env[F]): Decoder[F, Key, DatabaseConfig] =
+  given keyDecodeDatabaseConfig[F[_]](using Monad[F], Reader[F, String]): Decoder[F, Key, DatabaseConfig] =
     Decoder.derivedByKey[F, DatabaseConfig]
 end DatabaseConfig
