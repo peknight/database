@@ -62,6 +62,6 @@ object DatabaseConfig:
   : Codec[F, S, Cursor[S], DatabaseConfig] =
     Codec.derived[F, S, DatabaseConfig]
 
-  given keyDecodeDatabaseConfig[F[_]](using Reader[F, String], Monad[F]): Decoder[F, Key, DatabaseConfig] =
+  given keyDecodeDatabaseConfig[F[_]](using Reader[F, String])(using Monad[F]): Decoder[F, Key, DatabaseConfig] =
     Decoder.derivedByKey[F, DatabaseConfig]
 end DatabaseConfig
